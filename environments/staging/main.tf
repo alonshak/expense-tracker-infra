@@ -24,3 +24,18 @@ module "vpc" {
     project     = "expense-tracker"
   }
 }
+
+module "eks" {
+  source = "../../modules/eks"
+
+  cluster_name    = "expense-tracker-staging"
+  cluster_version = "1.29"
+
+  vpc_id             = module.vpc.vpc_id
+  private_subnet_ids = module.vpc.private_subnet_ids
+
+  tags = {
+    Project     = "expense-tracker"
+    Environment = "staging"
+  }
+}
