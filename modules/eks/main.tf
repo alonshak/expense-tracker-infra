@@ -9,7 +9,24 @@ module "eks" {
   subnet_ids = var.private_subnet_ids
 
   # Control Plane only
-  eks_managed_node_groups = {}
+  eks_managed_node_groups = {
+  default = {
+    name = "default-node-group"
+
+    instance_types = ["t3.small"]
+
+    min_size     = 1
+    max_size     = 2
+    desired_size = 1
+
+    subnet_ids = var.private_subnet_ids
+
+    tags = {
+      Name = "expense-tracker-node"
+    }
+  }
+}
+
   self_managed_node_groups = {}
   fargate_profiles = {}
 
