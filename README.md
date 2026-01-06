@@ -1,42 +1,40 @@
-# Expense Tracker – Infrastructure Platform
+# Expense Tracker – Infrastructure (EKS Platform)
 
-Production-grade cloud infrastructure and Kubernetes platform for the **Expense Tracker** application.
+This repository contains the cloud infrastructure and Kubernetes platform
+for the Expense Tracker project, implemented using Terraform and Amazon EKS.
 
-This repository defines the **AWS infrastructure and EKS-based Kubernetes platform** using Terraform, following real-world DevOps practices such as milestone-based delivery, Git workflows, cost awareness, and reproducibility.
+The focus of this repository is platform engineering:
+networking, cluster provisioning, compute, and core Kubernetes capabilities.
 
----
-
-## 🚀 Project Overview
-
-The goal of this project is to design and build a **production-ready Kubernetes platform** that can reliably run a real application, while maintaining:
-
-- Clear separation of concerns
-- Minimal and controlled cloud costs
-- Git-based workflows
-- Full infrastructure reproducibility
-
-This repository focuses **only on infrastructure and platform concerns**.  
-Application code and deployments are handled in separate repositories.
+Application code, deployments, and GitOps configuration are managed in separate repositories.
 
 ---
 
-## ��️ Architecture Summary
+## 🎯 Repository Purpose
 
-- **Cloud Provider:** AWS  
-- **Infrastructure as Code:** Terraform  
-- **Networking:** Custom VPC (public + private subnets, NAT Gateway)  
-- **Kubernetes:** Amazon EKS  
-- **Compute:** EKS Managed Node Groups  
-- **Deployment Model:** GitOps (via ArgoCD in later stages)
+The purpose of this repository is to:
 
-> Terraform provisions the cloud and cluster infrastructure.  
-> Kubernetes manages runtime, workloads, networking, and scaling.
+- Provision AWS infrastructure in a reproducible way
+- Build a production-aligned Kubernetes platform
+- Validate each infrastructure layer independently
+- Maintain strict cost awareness and clean Git workflows
+
+This is not a demo repository — every component is added intentionally
+and verified before moving forward.
+
+---
+
+## 🏗️ What This Repository Manages
+
+- AWS networking (VPC, subnets, routing)
+- Amazon EKS cluster provisioning
+- Kubernetes worker nodes (Managed Node Groups)
+- Core cluster-level capabilities required for production readiness
 
 ---
 
 ## 📂 Repository Structure
 
-```text
 expense-tracker-infra/
 ├── environments/
 │   ├── staging/
@@ -46,110 +44,88 @@ expense-tracker-infra/
 │   └── eks/
 ├── helm-addons/
 └── README.md
-```
-
-**Key concepts:**
-- `modules/` – reusable Terraform building blocks  
-- `environments/` – environment-specific wiring and configuration  
-- `helm-addons/` – cluster-level services added incrementally  
 
 ---
 
-## 🧱 Infrastructure Milestones
+## �� Implemented Infrastructure (Current State)
 
-The platform was built incrementally using **clear milestones**, each validated independently before moving forward.
+### Networking Layer
 
----
-
-### ✅ Milestone 1 – VPC Networking
-
-**Implemented:**
 - Custom VPC
 - Public and private subnets
 - Internet Gateway
 - Single NAT Gateway (low-cost design)
-- Route tables and associations
-
-**Purpose:**  
-Establish a secure and production-ready network foundation.
+- Route tables and subnet associations
 
 ---
 
-### ✅ Milestone 2 – EKS Control Plane
+### Kubernetes Control Plane
 
-**Implemented:**
-- Amazon EKS control plane
+- Amazon EKS cluster
 - IAM roles and permissions
-- Cluster networking integration
-
-**Intentionally excluded:**
-- Worker nodes
-- Add-ons
-- Workloads
-
-**Purpose:**  
-Validate Kubernetes control plane, IAM, and networking in isolation.
+- Networking integration with the VPC
 
 ---
 
-### ✅ Milestone 3 – Managed Node Groups
+### Compute Layer
 
-**Implemented:**
 - EKS Managed Node Group
-- Private subnet placement
+- Worker nodes running in private subnets
 - Minimal node count for cost efficiency
-- Automatic IAM configuration
-
-**Verification:**
-```bash
-kubectl get nodes
-kubectl get namespaces
-```
-
-**Purpose:**  
-Introduce compute capacity and allow workloads to run on the cluster.
+- Automatic IAM configuration for nodes
 
 ---
 
-## 🔄 Workflow & Cost Strategy
+### Cluster Add-ons
 
-Infrastructure changes follow a consistent and disciplined workflow:
+- Kubernetes Metrics Server installed in the kube-system namespace
+- Metrics API enabled (metrics.k8s.io)
+- Resource visibility enabled via kubectl
 
-```text
+Validation commands:
+
+kubectl get deployment metrics-server -n kube-system
+kubectl top nodes
+kubectl top pods -A
+
+---
+
+## 🔄 Workflow & Validation Model
+
+All infrastructure changes follow a strict workflow:
+
 terraform apply
-→ verify (AWS / kubectl)
-→ commit → PR → merge
-```
+→ verify (AWS Console / kubectl)
+→ commit
+→ pull request
+→ merge
 
-Early milestones used **ephemeral environments** (`apply → destroy`) to reduce costs.  
-Later milestones operate on a **persistent cluster** to support platform-level components.
+Earlier stages were validated using ephemeral environments
+(apply → verify → destroy) to minimize cloud costs.
 
----
-
-## 🚫 Out of Scope (By Design)
-
-The following were intentionally excluded to keep the project focused:
-
-- Multi-region deployments
-- Service mesh
-- Advanced autoscaling strategies
-- Heavy security hardening beyond baseline
-
-These are considered optional future enhancements, not core platform requirements.
+At the current stage, the cluster may remain running temporarily
+to support platform-level components.
 
 ---
 
-## 🔜 Next Steps
+## 📌 Scope Clarification
 
-Upcoming milestones include:
-- Kubernetes cluster add-ons
-- Ingress controller
-- GitOps with ArgoCD
-- Application deployment
-- Observability and logging
+This repository intentionally focuses only on infrastructure
+and Kubernetes platform concerns.
+
+It does not include:
+
+- Application code
+- CI/CD pipelines
+- GitOps configuration
+- Business logic or frontend assets
+
+Those concerns are handled in their respective repositories.
 
 ---
 
 ## 👤 Author Notes
 
-This project was built with a **production mindset**, emphasizing clarity, maintainability, and real DevOps workflows rather than one-off demos.
+This infrastructure was built with a production mindset,
+prioritizing clarity, correctness, and real-world DevOps workflows
+over shortcuts or one-off configurations.
