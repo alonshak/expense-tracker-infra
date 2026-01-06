@@ -124,6 +124,22 @@ Internet
 
 ---
 
+### ✅ Milestone 6 — GitOps Control Plane (ArgoCD)
+
+**Implemented:**
+- ArgoCD installation on the EKS cluster
+- GitOps control plane deployment in a dedicated namespace
+- Cluster capacity adjustments to support ArgoCD workloads
+- Stable operation of all core ArgoCD components
+- Dex intentionally disabled (no SSO configured at this stage)
+
+**Verification:**
+```bash
+kubectl get pods -n argocd
+kubectl get nodes
+
+---
+
 ## 🔄 Workflow & Validation Model
 
 Infrastructure changes follow a strict workflow:
